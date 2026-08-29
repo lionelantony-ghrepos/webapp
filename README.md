@@ -45,14 +45,13 @@ Equivalent:
 npm run functions:deploy
 ```
 
-The function calls OpenRouter (`https://openrouter.ai/api/v1/chat/completions`) with the project key. It is a function secret, not a Next.js env var. Never commit the key.
+The function calls OpenAI (`https://api.openai.com/v1/chat/completions`) with `OPENAI_API_KEY`. It is a function secret, not a Next.js env var. Paste the key in the local terminal. Never commit it. Never prefix it `NEXT_PUBLIC_`.
 
 ```powershell
-npx @insforge/cli ai setup
-npx @insforge/cli secrets add OPENROUTER_API_KEY PASTE_THE_KEY_HERE
+npx @insforge/cli secrets add OPENAI_API_KEY
 ```
 
-`ai setup` writes `OPENROUTER_API_KEY` to a gitignored `.env.local` for local reference. Copy that same value into `secrets add`. Do not prefix it `NEXT_PUBLIC_`. Optional: `OPENROUTER_CHAT_MODEL` (default `openai/gpt-4o-mini`). Optional for a live catalog inside the function: `INSFORGE_BASE_URL` and `ANON_KEY` (the function already falls back to the four static stays).
+The CLI will prompt for the value in that terminal. Optional: `OPENAI_CHAT_MODEL` (default `gpt-4o-mini`). Optional for a live catalog inside the function: `INSFORGE_BASE_URL` and `ANON_KEY` (the function already falls back to the four static stays).
 
 No new SQL migration in this PR.
 
@@ -73,7 +72,7 @@ NEXT_PUBLIC_INSFORGE_URL=https://YOUR_PROJECT.insforge.app
 NEXT_PUBLIC_INSFORGE_ANON_KEY=
 ```
 
-Fill the URL from the InsForge dashboard Install page (or `npx @insforge/cli current` after link). Fill the anon key from `secrets get ANON_KEY`. Never put API keys, user tokens, OpenRouter keys, or other secrets in git, logs, or this README.
+Fill the URL from the InsForge dashboard Install page (or `npx @insforge/cli current` after link). Fill the anon key from `secrets get ANON_KEY`. Never put API keys, user tokens, OpenAI keys, or other secrets in git, logs, or this README.
 
 Equivalent npm scripts after link:
 
