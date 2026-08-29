@@ -5,8 +5,8 @@
  *   npx @insforge/cli functions deploy concierge-chat --file functions/concierge-chat.ts --name "Concierge chat" --description "Stay-grounded Havn concierge"
  *
  * Secrets (function env, never commit):
- *   OPENROUTER_API_KEY  — project OpenRouter key from the InsForge dashboard / `npx @insforge/cli ai setup`
- *   OPENROUTER_CHAT_MODEL (optional) — default openai/gpt-4o-mini
+ *   OPENAI_API_KEY — paste via `npx @insforge/cli secrets add OPENAI_API_KEY` in a local terminal
+ *   OPENAI_CHAT_MODEL (optional) — default gpt-4o-mini
  *   INSFORGE_BASE_URL + ANON_KEY (optional) — live `stays` catalog; static fallback is built in
  */
 
@@ -20,7 +20,7 @@ const corsHeaders: Record<string, string> = {
 
 const MAX_MESSAGES = 16;
 const MAX_CONTENT = 2000;
-const DEFAULT_MODEL = "openai/gpt-4o-mini";
+const DEFAULT_MODEL = "gpt-4o-mini";
 
 type ChatRole = "user" | "assistant";
 
@@ -261,13 +261,11 @@ async function completeChat(
   messages: ChatMessage[],
   catalog: string,
 ): Promise<{ reply: string | null; unconfigured?: boolean }> {
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": "https://havn.travel",
-      "X-Title": "Havn Concierge",
     },
     body: JSON.stringify({
       model,
@@ -338,17 +336,16 @@ export default async function (req: Request): Promise<Response> {
     );
   }
 
-  const apiKey = Deno.env.get("OPENROUTER_API_KEY")?.trim();
+  const apiKey = Deno.env.get("OPENAI_API_KEY")?.trim();
   if (!apiKey) {
     return jsonResponse({
       error: "unconfigured",
       reply:
-        "The desk has no lamp tonight. The OpenRouter key is not set on the concierge function.",
+        "The desk has no lamp tonight. The OpenAI key is not set on the concierge function.",
     });
   }
 
-  const model =
-    Deno.env.get("OPENROUTER_CHAT_MODEL")?.trim() || DEFAULT_MODEL;
+  const model = Deno.env.get("OPENAI_CHAT_MODEL")?.trim() || DEFAULT_MODEL;
   const stays = await loadStays();
 
   try {
@@ -357,7 +354,7 @@ export default async function (req: Request): Promise<Response> {
       return jsonResponse({
         error: "unconfigured",
         reply:
-          "The desk has no lamp tonight. The OpenRouter key on the function was refused.",
+          "The desk has no lamp tonight. The OpenAI key on the function was refused.",
       });
     }
     if (!result.reply) {
