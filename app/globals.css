@@ -101,3 +101,55 @@ body {
     transparent
   );
 }
+
+.club-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.club-input {
+  margin-top: 0.5rem;
+  width: 100%;
+  border: 1px solid var(--line);
+  background: rgba(5, 9, 16, 0.42);
+  color: var(--ivory);
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 300;
+  outline: none;
+}
+
+.club-input::placeholder {
+  color: var(--muted);
+}
+
+.club-input:focus {
+  border-color: color-mix(in srgb, var(--ivory) 32%, transparent);
+}
+
+.club-button {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  border: 1px solid var(--line);
+  background: transparent;
+  padding: 0.7rem 1.35rem;
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+.club-button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--ivory) 40%, transparent);
+}
+
+.club-button:disabled {
+  opacity: 0.55;
+}

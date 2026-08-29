@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Outfit } from "next/font/google";
+import { AuthProvider } from "@/components/auth-provider";
 import { ConciergeDock } from "@/components/concierge-dock";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -34,11 +35,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${serif.variable} ${sans.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-ink font-sans text-ivory">
-        <div className="grain" aria-hidden="true" />
-        <SiteHeader />
-        <main className="flex flex-1 flex-col pb-56">{children}</main>
-        <SiteFooter />
-        <ConciergeDock />
+        <AuthProvider>
+          <div className="grain" aria-hidden="true" />
+          <SiteHeader />
+          <main className="flex flex-1 flex-col pb-56">{children}</main>
+          <SiteFooter />
+          <ConciergeDock />
+        </AuthProvider>
       </body>
     </html>
   );
