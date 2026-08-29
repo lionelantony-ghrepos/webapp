@@ -3,7 +3,7 @@ import { AuthControls } from "@/components/auth-controls";
 
 export function SiteHeader() {
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-[60]">
       <div className="hairline" />
       <div className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between px-6 py-6 sm:px-10">
         <Link href="/" className="wordmark text-[0.95rem] text-ivory">
