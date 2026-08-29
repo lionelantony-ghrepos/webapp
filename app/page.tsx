@@ -1,8 +1,9 @@
 import { Hero } from "@/components/hero";
 import { StayCard } from "@/components/stay-card";
-import { stays } from "@/lib/stays";
+import { listStays } from "@/lib/stays";
 
-export default function Home() {
+export default async function Home() {
+  const stays = await listStays();
   return (
     <>
       <Hero />

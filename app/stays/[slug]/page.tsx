@@ -16,7 +16,7 @@ export async function generateMetadata({
   params,
 }: StayPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const stay = getStay(slug);
+  const stay = await getStay(slug);
 
   if (!stay) {
     return { title: "Stay" };
@@ -30,7 +30,7 @@ export async function generateMetadata({
 
 export default async function StayPage({ params }: StayPageProps) {
   const { slug } = await params;
-  const stay = getStay(slug);
+  const stay = await getStay(slug);
 
   if (!stay) {
     notFound();
