@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:migrate": "npx @insforge/cli db migrations up --all",
+    "db:seed": "npx @insforge/cli db import seeds/stays.sql"
   },
   "dependencies": {
     "@insforge/sdk": "^1.5.2",

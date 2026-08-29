@@ -1,3 +1,5 @@
+import { getInsforgeClient } from "@/lib/insforge";
+
 export type PhotoCredit = {
   src: string;
   alt: string;
@@ -19,6 +21,29 @@ export type Stay = {
   body: string[];
   image: PhotoCredit;
 };
+
+/** Postgres `stays` row (flattened image fields + sort_order). */
+export type StayRow = {
+  slug: string;
+  name: string;
+  region: string;
+  country: string;
+  mood: string;
+  season: string;
+  sleeps: string;
+  setting: string;
+  lede: string;
+  body: string[];
+  image_src: string;
+  image_alt: string;
+  image_photographer: string;
+  image_profile_url: string;
+  image_unsplash_url: string;
+  sort_order: number;
+};
+
+const STAY_SELECT =
+  "slug, name, region, country, mood, season, sleeps, setting, lede, body, image_src, image_alt, image_photographer, image_profile_url, image_unsplash_url, sort_order";
 
 const unsplash = (id: string, width = 2000) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=80`;
@@ -122,8 +147,119 @@ export const stays: Stay[] = [
   },
 ];
 
-export function getStay(slug: string): Stay | undefined {
-  return stays.find((stay) => stay.slug === slug);
+export const photoCredits: PhotoCredit[] = [heroPhoto, ...stays.map((stay) => stay.image)];
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0;
 }
 
-export const photoCredits: PhotoCredit[] = [heroPhoto, ...stays.map((stay) => stay.image)];
+function asParagraphs(value: unknown): string[] | null {
+  if (!Array.isArray(value) || value.length === 0) {
+    return null;
+  }
+  if (!value.every((item) => typeof item === "string" && item.length > 0)) {
+    return null;
+  }
+  return value;
+}
+
+export function mapStayRow(row: unknown): Stay | null {
+  if (!row || typeof row !== "object") {
+    return null;
+  }
+
+  const record = row as Record<string, unknown>;
+  const body = asParagraphs(record.body);
+
+  if (
+    !isNonEmptyString(record.slug) ||
+    !isNonEmptyString(record.name) ||
+    !isNonEmptyString(record.region) ||
+    !isNonEmptyString(record.country) ||
+    !isNonEmptyString(record.mood) ||
+    !isNonEmptyString(record.season) ||
+    !isNonEmptyString(record.sleeps) ||
+    !isNonEmptyString(record.setting) ||
+    !isNonEmptyString(record.lede) ||
+    !body ||
+    !isNonEmptyString(record.image_src) ||
+    !isNonEmptyString(record.image_alt) ||
+    !isNonEmptyString(record.image_photographer) ||
+    !isNonEmptyString(record.image_profile_url) ||
+    !isNonEmptyString(record.image_unsplash_url)
+  ) {
+    return null;
+  }
+
+  return {
+    slug: record.slug,
+    name: record.name,
+    region: record.region,
+    country: record.country,
+    mood: record.mood,
+    season: record.season,
+    sleeps: record.sleeps,
+    setting: record.setting,
+    lede: record.lede,
+    body,
+    image: {
+      src: record.image_src,
+      alt: record.image_alt,
+      photographer: record.image_photographer,
+      profileUrl: record.image_profile_url,
+      unsplashUrl: record.image_unsplash_url,
+    },
+  };
+}
+
+/**
+ * Home catalog. Reads `stays` from InsForge when env is set; otherwise the
+ * static four rooms so the shell still renders without secrets.
+ */
+export async function listStays(): Promise<Stay[]> {
+  const client = getInsforgeClient();
+
+  if (!client) {
+    return stays;
+  }
+
+  const { data, error } = await client.database
+    .from("stays")
+    .select(STAY_SELECT)
+    .order("sort_order", { ascending: true })
+    .limit(50);
+
+  if (error || !data) {
+    return stays;
+  }
+
+  const mapped = data
+    .map((row) => mapStayRow(row))
+    .filter((stay): stay is Stay => stay !== null);
+
+  return mapped.length > 0 ? mapped : stays;
+}
+
+/**
+ * Stay detail. Prefers InsForge when configured; falls back to static data.
+ */
+export async function getStay(slug: string): Promise<Stay | undefined> {
+  const fromStatic = stays.find((stay) => stay.slug === slug);
+  const client = getInsforgeClient();
+
+  if (!client) {
+    return fromStatic;
+  }
+
+  const { data, error } = await client.database
+    .from("stays")
+    .select(STAY_SELECT)
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error || !data) {
+    return fromStatic;
+  }
+
+  return mapStayRow(data) ?? fromStatic;
+}
