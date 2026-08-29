@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #050910;
+  --fjord: #0b1526;
+  --dusk-blue: #1a2744;
+  --violet: #3d2458;
+  --wine: #6e2344;
+  --crimson: #a8324a;
+  --ember: #c46a52;
+  --ivory: #f3ece0;
+  --mist: #c8c0b4;
+  --muted: #8a8378;
+  --line: rgba(243, 236, 224, 0.14);
+  --glass: rgba(8, 12, 22, 0.55);
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-fjord: var(--fjord);
+  --color-dusk-blue: var(--dusk-blue);
+  --color-violet: var(--violet);
+  --color-wine: var(--wine);
+  --color-crimson: var(--crimson);
+  --color-ember: var(--ember);
+  --color-ivory: var(--ivory);
+  --color-mist: var(--mist);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --font-sans: var(--font-outfit);
+  --font-serif: var(--font-cormorant);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--ink);
+  color: var(--ivory);
+  font-family: var(--font-outfit), sans-serif;
+  min-height: 100%;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--crimson) 70%, transparent);
+  color: var(--ivory);
+}
+
+.dusk-veil {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(5, 9, 16, 0.28) 0%,
+      rgba(26, 22, 52, 0.18) 32%,
+      rgba(110, 35, 68, 0.42) 68%,
+      rgba(5, 9, 16, 0.94) 100%
+    ),
+    linear-gradient(
+      105deg,
+      rgba(10, 20, 40, 0.4) 0%,
+      transparent 46%,
+      rgba(168, 50, 74, 0.16) 100%
+    );
+}
+
+.glass-panel {
+  background: linear-gradient(
+    180deg,
+    rgba(12, 18, 32, 0.62),
+    rgba(8, 12, 22, 0.8)
+  );
+  backdrop-filter: blur(22px) saturate(1.15);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.wordmark {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--crimson) 55%, var(--violet)),
+    transparent
+  );
+}
