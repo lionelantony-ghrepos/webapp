@@ -36,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col bg-ink font-sans text-ivory">
         <div className="grain" aria-hidden="true" />
         <SiteHeader />
-        <main className="flex flex-1 flex-col pb-36">{children}</main>
+        <main className="flex flex-1 flex-col pb-56">{children}</main>
         <SiteFooter />
         <ConciergeDock />
       </body>
