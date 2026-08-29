@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { StayRequest } from "@/components/stay-request";
 import { getStay, stays } from "@/lib/stays";
 
 type StayPageProps = {
@@ -99,10 +100,7 @@ export default async function StayPage({ params }: StayPageProps) {
               <dd className="mt-2 font-serif text-xl text-ivory">{stay.setting}</dd>
             </div>
           </dl>
-          <p className="font-serif italic text-mist">
-            Arrivals are arranged by concierge in a later stay. No booking desk
-            yet.
-          </p>
+          <StayRequest staySlug={stay.slug} stayName={stay.name} />
           <Link
             href="/#stays"
             className="inline-block text-[0.7rem] uppercase tracking-[0.2em] text-ivory underline-offset-4 hover:underline"

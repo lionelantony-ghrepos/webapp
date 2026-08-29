@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthControls } from "@/components/auth-controls";
 
 export function SiteHeader() {
   return (
@@ -8,13 +9,14 @@ export function SiteHeader() {
         <Link href="/" className="wordmark text-[0.95rem] text-ivory">
           Havn
         </Link>
-        <nav aria-label="Primary">
+        <nav aria-label="Primary" className="flex items-center gap-6 sm:gap-8">
           <Link
             href="/#stays"
             className="text-[0.72rem] font-light uppercase tracking-[0.22em] text-mist transition-colors hover:text-ivory"
           >
             Stays
           </Link>
+          <AuthControls />
         </nav>
       </div>
     </header>

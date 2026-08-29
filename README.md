@@ -2,7 +2,7 @@
 
 A quiet, expensive-feeling travel house for the Scandinavian north. Fjords, winter light, glass cabins, dusk.
 
-This repository is a Next.js visual shell. Stay copy lives in InsForge Postgres when configured, and in `lib/stays.ts` when it is not. There is no booking desk, no payments, and no live concierge yet.
+This repository is a Next.js visual shell. Stay copy lives in InsForge Postgres when configured, and in `lib/stays.ts` when it is not. Signed-in guests can send a stay inquiry. There is no booking desk, no payments, and no live concierge yet.
 
 ## Install and run
 
@@ -20,17 +20,31 @@ npm run lint
 npm run build
 ```
 
-The app runs without secrets. Home and stay detail read from InsForge when both `NEXT_PUBLIC_INSFORGE_*` vars are set; otherwise they use the four static stays so the homepage never blanks.
+The app runs without secrets. Home and stay detail read from InsForge when both `NEXT_PUBLIC_INSFORGE_*` vars are set; otherwise they use the four static stays. Auth and the request form still render when env is blank; they explain that the backend is unconfigured instead of crashing.
 
-## InsForge (Postgres stays)
+## InsForge (Postgres stays + requests)
 
-Do not install the CLI globally. Login is already done on Lionel's machine.
+Do not install the CLI globally. Login is already done on Lionel's machine. Stays were already migrated and seeded locally.
 
-From `D:\ljarepos\webapp`:
+After pulling this change, apply the new `stay_requests` migration:
 
 ```powershell
 cd D:\ljarepos\webapp
 npx @insforge/cli whoami
+npx @insforge/cli db migrations up --all
+```
+
+Equivalent:
+
+```bash
+npm run db:migrate
+```
+
+That applies every pending file in `migrations/`, including `migrations/20260829153000_create_stay_requests.sql`. Do not re-run the stays seed unless you need it again.
+
+First-time project setup (already done locally for stays):
+
+```powershell
 npx @insforge/cli link
 npx @insforge/cli db migrations up --all
 npx @insforge/cli db import .\seeds\stays.sql
@@ -54,7 +68,12 @@ npm run db:migrate
 npm run db:seed
 ```
 
-Schema: `migrations/20260829120000_create_stays.sql` (slug PK, public SELECT RLS, no public writes). Seed: `seeds/stays.sql` (upserts eggum, kide, havblik, lysfjord).
+Schema:
+
+- `migrations/20260829120000_create_stays.sql` — slug PK, public SELECT RLS, no public writes
+- `migrations/20260829153000_create_stay_requests.sql` — guest inquiries, owner INSERT/SELECT RLS, no anon INSERT, no public SELECT of others' rows
+
+Seed: `seeds/stays.sql` (upserts eggum, kide, havblik, lysfjord). Auth is email OTP via `@insforge/sdk` (`signInWithOtp` / `verifyOtp`).
 
 ## What this repo includes
 
@@ -64,13 +83,13 @@ Schema: `migrations/20260829120000_create_stays.sql` (slug PK, public SELECT RLS
 - Home: full-bleed cinematic hero, short manifesto, grid of four stays
 - Stay detail pages from InsForge or the same local data (`lib/stays.ts`)
 - Concierge dock (UI only): placeholder message, suggested prompts, input
-- InsForge SDK client, timestamped SQL migration, and seed upsert
+- InsForge SDK client, timestamped SQL migrations, and seed upsert
+- Email OTP sign-in in the header; stay detail “Request this stay” inquiry (session required)
 
 ## Later PRs
 
 - Real concierge chat (LLM / InsForge functions)
-- Auth and membership
-- Booking, payments, and inquiry forms
+- Booking and payments
 
 ## Photography
 
