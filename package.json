@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "db:migrate": "npx @insforge/cli db migrations up --all",
-    "db:seed": "npx @insforge/cli db import seeds/stays.sql"
+    "db:seed": "npx @insforge/cli db import seeds/stays.sql",
+    "functions:deploy": "npx @insforge/cli functions deploy concierge-chat --file functions/concierge-chat.ts --name \"Concierge chat\" --description \"Stay-grounded Havn concierge\""
   },
   "dependencies": {
     "@insforge/sdk": "^1.5.2",
